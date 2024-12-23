@@ -5,6 +5,20 @@ import { validateRequest } from '../middleware/validation';
 
 const recipeRoutes = Router();
 
+recipeRoutes.post('/generate', 
+    body('preferences').optional().isArray().withMessage('preferences debe ser un array de cadenas'),
+    body('preferences.*').optional().isString().withMessage('Cada preferencia debe ser una cadena'),
+    body('restrictions').optional().isArray().withMessage('restrictions debe ser un array de cadenas'),
+    body('restrictions.*').optional().isString().withMessage('Cada restricción debe ser una cadena'),
+    body('typeRecipe').notEmpty().isString(),
+    body('people').notEmpty().isInt(),
+    body('prepTime').optional().isInt(),
+    body('caloriesRange').optional().isString().matches(/^\d+-\d+$/).withMessage('El rango de calorías debe estar en formato "200-600"'),
+    body('event').optional().isString(),
+    validateRequest,
+    RecipeController.generateRecipe
+);
+
 recipeRoutes.get('/', RecipeController.getAllRecipes);
 
 recipeRoutes.get('/:id', 
@@ -13,39 +27,27 @@ recipeRoutes.get('/:id',
     RecipeController.getRecipeById
 );
 
-recipeRoutes.post('/', 
-    body('name').isLength({ min: 1 }).withMessage('El nombre es obligatorio'),
-    body('description').isLength({ min: 1 }).withMessage('La descripción es obligatoria'),
-    body('typeRecipe').isIn(['Comida', 'Reposteria', 'Snack']).withMessage('El tipo de receta es obligatorio'),
-    body('event').isIn(['Especial', 'Diario', 'Familiar']).withMessage('El tipo de evento es obligatorio'),
-    body('restrictions').isIn(['Vegana', 'Vegetariana', 'Sin lactosa', 'Sin gluten', 'Bajo en sal']).withMessage('Las restricciones son obligatorias'),
-    body('prepTime').isInt({ min: 1 }).withMessage('El tiempo de preparación es obligatorio'),
-    body('ingredients').isArray().withMessage('Los ingredientes son obligatorios'),
-    body('nutrientsInfo').isArray().withMessage('Las nutriciones son obligatorias'),
-    body('people').isInt({ min: 1 }).withMessage('El número de personas es obligatorio'),
-    validateRequest,
-    RecipeController.createRecipe
-);
-
-recipeRoutes.put('/:id', 
-    param('id').isMongoId().withMessage('ID inválido'),
-    body('name').isLength({ min: 1 }).withMessage('El nombre es obligatorio'),
-    body('description').isLength({ min: 1 }).withMessage('La descripción es obligatoria'),
-    body('typeRecipe').isIn(['Comida', 'Reposteria', 'Snack']).withMessage('El tipo de receta es obligatorio'),
-    body('event').isIn(['Especial', 'Diario', 'Familiar']).withMessage('El tipo de evento es obligatorio'),
-    body('restrictions').isIn(['Vegana', 'Vegetariana', 'Sin lactosa', 'Sin gluten', 'Bajo en sal']).withMessage('Las restricciones son obligatorias'),
-    body('prepTime').isInt({ min: 1 }).withMessage('El tiempo de preparación es obligatorio'),
-    body('ingredients').isArray().withMessage('Los ingredientes son obligatorios'),
-    body('nutrientsInfo').isArray().withMessage('Las nutriciones son obligatorias'),
-    body('people').isInt({ min: 1 }).withMessage('El número de personas es obligatorio'),
-    validateRequest,
-    RecipeController.updateRecipeById
-);
-
 recipeRoutes.delete('/:id', 
     param('id').isMongoId().withMessage('ID inválido'),
     validateRequest,
     RecipeController.deleteRecipeById
+);
+
+recipeRoutes.post('/', 
+    body('name').notEmpty().isString(),
+    body('description').notEmpty().isString(),
+    body('typeRecipe').notEmpty().isString(),
+    body('event').optional().isString(),
+    body('restrictions').optional().isString(),
+    body('prepTime').optional().isInt(),
+    body('ingredients').notEmpty().isArray(),
+    body('nutrientsInfo').isArray().withMessage('nutrientsInfo debe ser un array'),
+    body('nutrientsInfo.*.calories').isNumeric().withMessage('calories debe ser un número'),
+    body('nutrientsInfo.*.proteins').isNumeric().withMessage('proteins debe ser un número'),
+    body('nutrientsInfo.*.carbohydrates').isNumeric().withMessage('carbohydrates debe ser un número'),
+    body('people').notEmpty().isInt(),
+    validateRequest,
+    RecipeController.createRecipe
 );
 
 export default recipeRoutes;

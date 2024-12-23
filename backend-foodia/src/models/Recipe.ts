@@ -5,7 +5,7 @@ export interface IRecipe extends Document {
     description: string;
     typeRecipe: string;
     event: string;
-    restrictions: string;
+    restrictions: string[];
     prepTime: number;
     ingredients: string[];
     nutrientsInfo: {
@@ -43,11 +43,10 @@ const RecipeSchema = new Schema<IRecipe>({
         trim: true
     },
     restrictions: {
-        type: String,
+        type: [String],
+        enum: ['Vegana', 'Vegetariana', 'Sin gluten', 'Sin lactosa', 'Bajo en sal'],
         required: true,
-        default: 'Sin restricciones',
-        enum: ['Vegana', 'Vegetariana', 'Sin lactosa', 'Sin gluten', 'Bajo en sal'],
-        trim: true
+        default: []
     },
     prepTime: {
         type: Number,
