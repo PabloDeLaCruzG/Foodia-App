@@ -11,6 +11,6 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use('/api/reciìes', recipeRoutes);
+app.use('/api/recipes', recipeRoutes);
 
 export default app;
