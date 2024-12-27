@@ -22,3 +22,15 @@ export const SettingsIcon = (props) => (
 export const NotiIcon = (props) => (
   <Ionicons name="notifications" size={24} color="black" {...props} />
 );
+
+export const FavIcon = (props) => (
+  <AntDesign name="heart" size={24} color="black" {...props} />
+);
+
+export const FavoIcon = (props) => (
+  <AntDesign name="hearto" size={24} color="black" {...props} />
+);
+
+export const AddIcon = (props) => (
+  <FontAwesome name="plus-circle" size={24} color="black" />
+);

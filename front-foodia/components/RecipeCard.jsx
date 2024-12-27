@@ -1,17 +1,48 @@
 import { View, Text, Animated, Pressable } from "react-native";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Link } from "expo-router";
 import { styled } from "nativewind";
+import { FavIcon, FavoIcon } from "./Icons";
 
 const StyledPressable = styled(Pressable);
 
 export function RecipeCard({ recipe }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
   return (
     <Link asChild href={`/${recipe._id}`}>
       <StyledPressable className="active:opacity-70">
-        <View className="bg-orange-200 rounded-lg p-4 shadow-md mx-2 my-1">
-          <Text className="text-xl font-bold">{recipe.name}</Text>
-          <Text className="text-sm">{recipe.description}</Text>
+        <View className="bg-[#FDF4DB] rounded-lg p-4 shadow-sm my-1 flex-row justify-between items-center">
+          <View className="flex-1">
+            <Text className="text-gray-500 text-sm">{recipe.event}</Text>
+            <Text className="text-lg font-bold text-black">{recipe.name}</Text>
+            <Text className="text-black text-xs">
+              {recipe.description.length > 100
+                ? recipe.description.substring(0, 100) + "..."
+                : recipe.description}
+            </Text>
+            <View className="flex-row mt-2">
+              <Text> </Text>
+              <View
+                className={`px-2 py-1 rounded-lg ${
+                  recipe.typeRecipe === "Comida"
+                    ? "bg-[#F1BD4D]/50"
+                    : "bg-[#B8D8BA]/50"
+                }`}
+              >
+                <Text className={"text-xs text-black"}>
+                  {recipe.typeRecipe}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <Pressable onPress={toggleFavorite} className="ml-4">
+            {isFavorite ? <FavIcon /> : <FavoIcon />}
+          </Pressable>
         </View>
       </StyledPressable>
     </Link>
