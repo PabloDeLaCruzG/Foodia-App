@@ -13,23 +13,20 @@ import { FavIcon, FavoIcon } from "./Icons";
 
 export function Main() {
   const [recipes, setRecipes] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [isFavorite, setIsFavorite] = useState(false);
 
   const handlerFavorite = () => {
-    // TODO: Filtrar por favoritos
-    setIsFavorite(!isFavorite);
+    // Cambia el estado de favoritos
+    setIsFavorite((prev) => !prev);
   };
 
   useEffect(() => {
     recipeApi.getAllRecipes().then((recipes) => setRecipes(recipes));
   }, []);
 
-  useEffect(() => {
-    recipeApi.getAllRecipes().then((recipes) => {
-      setRecipes(recipes);
-    });
-  }, []);
+  const filteredRecipes = isFavorite
+    ? recipes.filter((recipe) => recipe.fav)
+    : recipes;
 
   return (
     <Screen>
@@ -45,9 +42,13 @@ export function Main() {
       <View>
         {recipes.length === 0 ? (
           <ActivityIndicator color={"orange"} size={"large"} />
+        ) : filteredRecipes.length === 0 && isFavorite ? (
+          <Text className="text-center text-lg text-gray-500">
+            No tienes ninguna receta favorita
+          </Text>
         ) : (
           <FlatList
-            data={recipes}
+            data={filteredRecipes}
             renderItem={({ item, index }) => (
               <AnimatedRecipeCard recipe={item} index={index} />
             )}

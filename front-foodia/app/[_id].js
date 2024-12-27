@@ -21,10 +21,11 @@ export default function RecipeDetail() {
     nutrientsInfo: [],
     ingredients: [],
   });
-  const [isFavorite, setIsFavorite] = useState(false);
 
   const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+    recipeApi.setFavorite(_id).then((response) => {
+      setRecipeInfo({ ...recipeInfo, fav: !recipeInfo.fav });
+    });
   };
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function RecipeDetail() {
               {recipeInfo.name}
             </Text>
             <Pressable onPress={toggleFavorite} className="ml-4">
-              {isFavorite ? <FavIcon /> : <FavoIcon />}
+              {recipeInfo.fav ? <FavIcon /> : <FavoIcon />}
             </Pressable>
           </View>
           {/* Tiempo */}

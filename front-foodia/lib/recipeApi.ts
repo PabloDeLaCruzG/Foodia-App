@@ -73,4 +73,21 @@ export const recipeApi = {
       throw error;
     }
   },
+
+  /**
+   * Marca una receta como favorita.
+   * @param id ID de la receta a marcar como favorita
+   */
+  setFavorite: async (id: string) => {
+    try {
+      const response = await axios.put(`${API_URL}/${id}/favorite`);
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error al marcar la receta con ID ${id} como favorita:`,
+        error,
+      );
+      throw error;
+    }
+  },
 };
