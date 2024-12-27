@@ -50,4 +50,10 @@ recipeRoutes.post('/',
     RecipeController.createRecipe
 );
 
+recipeRoutes.put('/:id/favorite', 
+    param('id').isMongoId().withMessage('ID inválido'),
+    validateRequest,
+    RecipeController.setFavorite
+);
+
 export default recipeRoutes;

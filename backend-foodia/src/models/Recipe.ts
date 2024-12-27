@@ -14,6 +14,7 @@ export interface IRecipe extends Document {
         carbohydrates: number;
     }[];
     people: number;
+    fav: boolean;
     //createdBy: PopulatedDoc<IUser & Document>;
 }
 
@@ -71,6 +72,10 @@ const RecipeSchema = new Schema<IRecipe>({
     people: {
         type: Number,
         required: true, 
+    },
+    fav: {
+        type: Boolean,
+        default: false
     },
     // createdBy: {
     //     type: Schema.Types.ObjectId,

@@ -161,6 +161,22 @@ class RecipeController {
             res.status(500).json({ message: 'Error al crear la receta' });
         }
     }
+
+    static setFavorite = async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            const recipe = await Recipe.findById(id);
+            if (!recipe) {
+                res.status(404).json({ message: 'No se encontró la receta' });
+                return;
+            }
+            recipe.fav = !recipe.fav;
+            await recipe.save();
+            res.status(200).json({ message: 'La receta se actualizó correctamente' });
+        } catch (error) {
+            res.status(500).json({ message: 'Error al actualizar la receta' });
+        }
+    }
 }
 
 export default RecipeController;
