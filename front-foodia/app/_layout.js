@@ -7,7 +7,12 @@ export default function Layout() {
     <View className="flex-1">
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: "#FDF6E3", border: "none" },
+          presentation: "modal",
+          headerStyle: {
+            backgroundColor: "#FDF4DB",
+            borderTopWidth: 0.3,
+            borderTopColor: "lightgray",
+          },
           headerTitle: "",
           headerRight: () => (
             <Link asChild href="/settings" className="text-white">

@@ -1,6 +1,7 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-const BASE_URL = "http://localhost:4000/api/recipes";
+const API_URL = Constants.expoConfig?.extra?.API_URL;
 
 export const recipeApi = {
   /**
@@ -8,7 +9,7 @@ export const recipeApi = {
    */
   getAllRecipes: async () => {
     try {
-      const response = await axios.get(BASE_URL);
+      const response = await axios.get(API_URL);
       return response.data;
     } catch (error) {
       console.error("Error al obtener todas las recetas:", error);
@@ -22,7 +23,8 @@ export const recipeApi = {
    */
   getRecipeById: async (id: string) => {
     try {
-      const response = await axios.get(`${BASE_URL}/${id}`);
+      const response = await axios.get(`${API_URL}/${id}`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(`Error al obtener la receta con ID ${id}:`, error);
@@ -36,7 +38,7 @@ export const recipeApi = {
    */
   deleteRecipeById: async (id: string) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/${id}`);
+      const response = await axios.delete(`${API_URL}/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error al eliminar la receta con ID ${id}:`, error);
@@ -50,7 +52,7 @@ export const recipeApi = {
    */
   createRecipe: async (recipe: any) => {
     try {
-      const response = await axios.post(BASE_URL, recipe);
+      const response = await axios.post(API_URL, recipe);
       return response.data;
     } catch (error) {
       console.error("Error al crear la receta:", error);
@@ -64,7 +66,7 @@ export const recipeApi = {
    */
   generateRecipe: async (recipeParams: any) => {
     try {
-      const response = await axios.post(`${BASE_URL}/generate`, recipeParams);
+      const response = await axios.post(`${API_URL}/generate`, recipeParams);
       return response.data;
     } catch (error) {
       console.error("Error al generar la receta:", error);

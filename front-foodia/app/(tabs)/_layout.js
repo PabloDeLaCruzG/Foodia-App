@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 
-import { AddIcon, HomeIcon, SettingsIcon } from "../../components/Icons";
+import { CalendarIcon, HomeIcon } from "../../components/Icons";
 
 export default function TabsLayout() {
   return (
@@ -8,9 +8,9 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#FDF6E3",
-          border: "none",
-          paddingTop: 10,
+          backgroundColor: "#FDF4DB",
+          borderTopWidth: 0.3,
+          borderTopColor: "lightgray",
         },
         tabBarActiveTintColor: "orange",
         tabBarInactiveTintColor: "gray",
@@ -20,22 +20,15 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "",
+          title: "Inicio",
           tabBarIcon: ({ color }) => <HomeIcon color={color} />,
         }}
       />
       <Tabs.Screen
-        name="generate"
+        name="menu"
         options={{
-          title: "",
-          tabBarIcon: ({ color }) => <AddIcon color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "",
-          tabBarIcon: ({ color }) => <SettingsIcon color={color} />,
+          title: "Menús",
+          tabBarIcon: ({ color }) => <CalendarIcon color={color} />,
         }}
       />
     </Tabs>

@@ -1,11 +1,11 @@
 import { Text, ScrollView } from "react-native";
-import { Screen } from "../../components/Screen";
+import { Screen } from "../components/Screen";
 
-export default function Settings() {
+export default function Generate() {
   return (
     <Screen>
+      <Text>Generate</Text>;
       <ScrollView>
-        <Text>Settings</Text>;
         <Text>
           lorem ipsum dolor sit amet , consectetur adipiscing elit. sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad

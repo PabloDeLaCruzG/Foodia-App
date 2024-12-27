@@ -2,16 +2,10 @@ import { View, Text, Animated, Pressable } from "react-native";
 import { useRef, useEffect, useState } from "react";
 import { Link } from "expo-router";
 import { styled } from "nativewind";
-import { FavIcon, FavoIcon } from "./Icons";
 
 const StyledPressable = styled(Pressable);
 
 export function RecipeCard({ recipe }) {
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
   return (
     <Link asChild href={`/${recipe._id}`}>
       <StyledPressable className="active:opacity-70">
@@ -39,10 +33,6 @@ export function RecipeCard({ recipe }) {
               </View>
             </View>
           </View>
-
-          <Pressable onPress={toggleFavorite} className="ml-4">
-            {isFavorite ? <FavIcon /> : <FavoIcon />}
-          </Pressable>
         </View>
       </StyledPressable>
     </Link>
