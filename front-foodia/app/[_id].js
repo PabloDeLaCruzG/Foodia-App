@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  FlatList,
   ScrollView,
   Text,
   View,
@@ -12,8 +11,10 @@ import { Screen } from "../components/Screen";
 import { useEffect, useState } from "react";
 import { recipeApi } from "../lib/recipeApi";
 import { FavIcon, FavoIcon } from "../components/Icons";
+import useRecipeStore from "../stores/recipeStore";
 
 export default function RecipeDetail() {
+  const { toggleFavorite } = useRecipeStore();
   const { _id } = useLocalSearchParams();
   const [recipeInfo, setRecipeInfo] = useState({
     name: "",
@@ -22,17 +23,22 @@ export default function RecipeDetail() {
     ingredients: [],
   });
 
-  const toggleFavorite = () => {
-    recipeApi.setFavorite(_id).then((response) => {
-      setRecipeInfo({ ...recipeInfo, fav: !recipeInfo.fav });
-    });
-  };
-
   useEffect(() => {
     if (_id) {
       recipeApi.getRecipeById(_id).then((recipe) => setRecipeInfo(recipe));
     }
   }, [_id]);
+
+  const handleToggleFavorite = () => {
+    toggleFavorite(_id);
+    try {
+      recipeApi.setFavorite(_id).then(() => {
+        setRecipeInfo({ ...recipeInfo, fav: !recipeInfo.fav });
+      });
+    } catch (error) {
+      console.error("Error al marcar la receta como favorita:", error);
+    }
+  };
 
   return (
     <Screen>
@@ -53,7 +59,7 @@ export default function RecipeDetail() {
             <Text className="text-3xl font-bold mb-2 text-dark">
               {recipeInfo.name}
             </Text>
-            <Pressable onPress={toggleFavorite} className="ml-4">
+            <Pressable onPress={handleToggleFavorite} className="ml-4">
               {recipeInfo.fav ? <FavIcon /> : <FavoIcon />}
             </Pressable>
           </View>

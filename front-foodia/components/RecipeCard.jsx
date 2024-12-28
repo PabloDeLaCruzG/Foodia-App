@@ -1,5 +1,5 @@
 import { View, Text, Animated, Pressable } from "react-native";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { Link } from "expo-router";
 import { styled } from "nativewind";
 

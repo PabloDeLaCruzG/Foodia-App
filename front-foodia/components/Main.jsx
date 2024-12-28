@@ -10,33 +10,37 @@ import { recipeApi } from "../lib/recipeApi";
 import { AnimatedRecipeCard } from "./RecipeCard";
 import { Screen } from "./Screen";
 import { FavIcon, FavoIcon } from "./Icons";
+import useRecipeStore from "../stores/recipeStore";
 
 export function Main() {
-  const [recipes, setRecipes] = useState([]);
+  const { recipes, setRecipes, toggleFavorite } = useRecipeStore();
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const handlerFavorite = () => {
-    // Cambia el estado de favoritos
-    setIsFavorite((prev) => !prev);
-  };
+  const handlerFavorite = () => setIsFavorite((prev) => !prev);
 
   useEffect(() => {
-    recipeApi.getAllRecipes().then((recipes) => setRecipes(recipes));
+    recipeApi
+      .getAllRecipes()
+      .then((recipes) => setRecipes(recipes || []))
+      .catch((error) => {
+        console.error("Error fetching recipes:", error);
+        setRecipes([]);
+      });
   }, []);
 
-  const filteredRecipes = isFavorite
-    ? recipes.filter((recipe) => recipe.fav)
-    : recipes;
+  const filteredRecipes = Array.isArray(recipes)
+    ? isFavorite
+      ? recipes.filter((recipe) => recipe.fav)
+      : recipes
+    : [];
 
   return (
     <Screen>
       <View className="pb-2 flex-row justify-between items-center">
         <Text className="text-2xl font-bold">Mis recetas</Text>
-        <View>
-          <Pressable onPress={handlerFavorite} className="ml-4">
-            {isFavorite ? <FavIcon /> : <FavoIcon />}
-          </Pressable>
-        </View>
+        <Pressable onPress={handlerFavorite} className="ml-4">
+          {isFavorite ? <FavIcon /> : <FavoIcon />}
+        </Pressable>
       </View>
 
       <View>
