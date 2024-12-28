@@ -32,7 +32,7 @@ export const FavoIcon = (props) => (
 );
 
 export const AddIcon = (props) => (
-  <FontAwesome name="plus-circle" size={30} color="black" {...props} />
+  <FontAwesome name="plus" size={24} color="black" {...props} />
 );
 
 export const CalendarIcon = (props) => (

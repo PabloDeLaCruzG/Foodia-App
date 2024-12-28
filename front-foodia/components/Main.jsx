@@ -9,11 +9,11 @@ import { useState, useEffect } from "react";
 import { recipeApi } from "../lib/recipeApi";
 import { AnimatedRecipeCard } from "./RecipeCard";
 import { Screen } from "./Screen";
-import { FavIcon, FavoIcon } from "./Icons";
+import { AddIcon, FavIcon, FavoIcon } from "./Icons";
 import useRecipeStore from "../stores/recipeStore";
 
 export function Main() {
-  const { recipes, setRecipes, toggleFavorite } = useRecipeStore();
+  const { recipes, setRecipes } = useRecipeStore();
   const [isFavorite, setIsFavorite] = useState(false);
 
   const handlerFavorite = () => setIsFavorite((prev) => !prev);
@@ -26,6 +26,7 @@ export function Main() {
         console.error("Error fetching recipes:", error);
         setRecipes([]);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredRecipes = Array.isArray(recipes)
@@ -59,6 +60,11 @@ export function Main() {
           />
         )}
       </View>
+
+      {/* Botón flotante */}
+      <Pressable className="absolute bottom-4 right-4 bg-orange-400 w-14 h-14 rounded-full flex items-center justify-center shadow-black shadow-sm shadow-opacity-20 elevation-5 active:opacity-95 active:scale-95">
+        <AddIcon color="white" size={24} />
+      </Pressable>
     </Screen>
   );
 }
