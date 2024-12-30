@@ -8,7 +8,7 @@ const StyledPressable = styled(Pressable);
 export function RecipeCard({ recipe }) {
   return (
     <Link asChild href={`/${recipe._id}`}>
-      <StyledPressable className="active:opacity-70">
+      <StyledPressable className="active:opacity-70 active:scale-95">
         <View className="bg-[#FDF4DB] rounded-lg p-4 shadow-sm my-1 flex-row justify-between items-center">
           <View className="flex-1">
             <Text className="text-gray-500 text-sm">{recipe.event}</Text>

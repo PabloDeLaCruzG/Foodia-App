@@ -11,6 +11,10 @@ import { AnimatedRecipeCard } from "./RecipeCard";
 import { Screen } from "./Screen";
 import { AddIcon, FavIcon, FavoIcon } from "./Icons";
 import useRecipeStore from "../stores/recipeStore";
+import { styled } from "nativewind";
+import { Link } from "expo-router";
+
+const StyledPressable = styled(Pressable);
 
 export function Main() {
   const { recipes, setRecipes } = useRecipeStore();
@@ -39,9 +43,12 @@ export function Main() {
     <Screen>
       <View className="pb-2 flex-row justify-between items-center">
         <Text className="text-2xl font-bold">Mis recetas</Text>
-        <Pressable onPress={handlerFavorite} className="ml-4">
+        <StyledPressable
+          onPress={handlerFavorite}
+          className="ml-4 active:scale-90"
+        >
           {isFavorite ? <FavIcon /> : <FavoIcon />}
-        </Pressable>
+        </StyledPressable>
       </View>
 
       <View>
@@ -61,10 +68,11 @@ export function Main() {
         )}
       </View>
 
-      {/* Botón flotante */}
-      <Pressable className="absolute bottom-4 right-4 bg-orange-400 w-14 h-14 rounded-full flex items-center justify-center shadow-black shadow-sm shadow-opacity-20 elevation-5 active:opacity-95 active:scale-95">
-        <AddIcon color="white" size={24} />
-      </Pressable>
+      <Link asChild href="/generate">
+        <StyledPressable className="absolute bottom-4 right-4 bg-orange-400 w-14 h-14 rounded-full flex items-center justify-center shadow-black shadow-sm shadow-opacity-20 elevation-5 active:scale-95 active:opacity-90">
+          <AddIcon color="white" size={24} />
+        </StyledPressable>
+      </Link>
     </Screen>
   );
 }

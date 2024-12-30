@@ -65,8 +65,13 @@ export const recipeApi = {
    * @param recipeParams Parámetros para generar la receta
    */
   generateRecipe: async (recipeParams: any) => {
+    console.log("Parámetros de la receta:", recipeParams);
     try {
-      const response = await axios.post(`${API_URL}/generate`, recipeParams);
+      const response = await axios.post(`${API_URL}/generate`, recipeParams, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error("Error al generar la receta:", error);
