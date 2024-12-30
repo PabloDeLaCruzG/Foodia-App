@@ -10,6 +10,11 @@ const useRecipeStore = create((set) => ({
   // Recibe un array 'recipes' como argumento y reemplaza el estado actual.
   setRecipes: (recipes) => set({ recipes }),
 
+  // 3. addRecipe: Una función (acción) para agregar una receta nueva al array de recetas.
+  // Recibe una receta como argumento y la agrega al array.
+  addRecipe: (recipe) =>
+    set((state) => ({ recipes: [...state.recipes, recipe] })),
+
   // 3. toggleFavorite: Una función para cambiar el estado de favorito ('fav') de una receta específica.
   // Recibe el '_id' de la receta a modificar.
   toggleFavorite: (_id) =>

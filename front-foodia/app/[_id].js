@@ -43,6 +43,7 @@ export default function RecipeDetail() {
   return (
     <Screen>
       <Stack.Screen
+        name="[id]"
         options={{
           headerTintColor: "orange",
           headerTitle: "",

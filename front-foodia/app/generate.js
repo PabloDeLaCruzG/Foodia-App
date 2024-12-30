@@ -12,6 +12,9 @@ import { recipeApi } from "../lib/recipeApi";
 import { AddIcon } from "../components/Icons";
 import Slider from "@react-native-community/slider";
 import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import LoadingModal from "../components/LoadingModal";
+import useRecipeStore from "../stores/recipeStore";
 
 export default function Generate() {
   // States for catch the selected options
@@ -25,8 +28,6 @@ export default function Generate() {
 
   const [newIngredient, setNewIngredient] = useState(""); // Temporal ingredient
   const [loading, setLoading] = useState(false);
-
-  const navigation = useNavigation();
 
   const toggleRestriction = (restriction) => {
     if (restrictions.includes(restriction)) {
@@ -50,6 +51,9 @@ export default function Generate() {
     }));
   };
 
+  const router = useRouter();
+  const { addRecipe } = useRecipeStore();
+
   const handleSubmit = async () => {
     const formattedRange = `${caloriesRange.min}-${caloriesRange.max}`;
 
@@ -68,24 +72,26 @@ export default function Generate() {
     try {
       setLoading(true); // Muestra un estado de carga
       const generatedRecipe = await recipeApi.generateRecipe(bodyj);
-      setLoading(false); // Oculta el estado de carga
 
       console.log("Receta generada con éxito:", generatedRecipe);
+
       if (generatedRecipe?.recipe?._id) {
         console.log("ID de la receta:", generatedRecipe.recipe._id);
-        navigation.navigate(`/${generatedRecipe.recipe._id}`);
+
+        addRecipe(generatedRecipe.recipe);
+
+        router.push(`/${generatedRecipe.recipe._id}`);
       } else {
         Alert.alert("Error", "No se pudo obtener el ID de la receta.");
       }
-
-      //Alert.alert("Receta generada con éxito", [{ text: "OK" }]);
     } catch (error) {
-      setLoading(false); // Oculta el estado de carga si hay error
+      console.error("Error al generar receta:", error);
       Alert.alert(
         "Error al generar receta",
         "Hubo un problema al generar tu receta. Inténtalo de nuevo más tarde.",
       );
-      console.error("Error al generar receta:", error);
+    } finally {
+      setLoading(false); // Ocultar el modal de carga
     }
   };
 
@@ -260,6 +266,8 @@ export default function Generate() {
           </Text>
         </Pressable>
       </ScrollView>
+
+      <LoadingModal visible={loading} />
     </Screen>
   );
 }
