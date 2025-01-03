@@ -8,7 +8,14 @@ const useRecipeStore = create((set) => ({
 
   // 2. setRecipes: Una función (acción) para actualizar el array completo de recetas.
   // Recibe un array 'recipes' como argumento y reemplaza el estado actual.
-  setRecipes: (recipes) => set({ recipes }),
+  setRecipes: (recipes) => {
+    if (Array.isArray(recipes)) {
+      set({ recipes });
+    } else {
+      console.error("setRecipes called with a non-array value:", recipes);
+      set({ recipes: [] }); // Asegúrate de que el estado se mantenga como un array vacío en caso de error
+    }
+  },
 
   // 3. addRecipe: Una función (acción) para agregar una receta nueva al array de recetas.
   // Recibe una receta como argumento y la agrega al array.

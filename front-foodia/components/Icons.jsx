@@ -42,3 +42,15 @@ export const CalendarIcon = (props) => (
 export const CloseIcon = (props) => (
   <FontAwesome name="close" size={24} color="black" {...props} />
 );
+
+export const CheckIcon = (props) => (
+  <AntDesign name="checkcircle" size={24} color="black" {...props} />
+);
+
+export const CheckIcono = (props) => (
+  <AntDesign name="checkcircleo" size={24} color="black" />
+);
+
+export const RemoveCircle = (props) => (
+  <Ionicons name="remove-circle" size={24} color="red" />
+);

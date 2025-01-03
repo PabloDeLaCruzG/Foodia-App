@@ -12,7 +12,7 @@ import { recipeApi } from "../lib/recipeApi";
 import { AddIcon } from "../components/Icons";
 import Slider from "@react-native-community/slider";
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import LoadingModal from "../components/LoadingModal";
 import useRecipeStore from "../stores/recipeStore";
 
@@ -97,6 +97,14 @@ export default function Generate() {
 
   return (
     <Screen>
+      <Stack.Screen
+        name="generate"
+        options={{
+          headerTintColor: "orange",
+          headerTitle: "",
+          headerRight: () => <Text className="text-white"></Text>,
+        }}
+      />
       <ScrollView>
         <Text className="text-3xl font-bold text-center mt-6  ">
           Generar receta
@@ -256,7 +264,7 @@ export default function Generate() {
 
         <Pressable
           onPress={handleSubmit}
-          className={`mt-6 bg-[#58b57e] py-4 items-center rounded-lg ${
+          className={`mb-10 mt-8 bg-[#58b57e] py-4 items-center rounded-lg ${
             loading ? "opacity-50" : "active:opacity-70 active:scale-95"
           }`}
           disabled={loading} // Deshabilitar mientras se genera la receta
