@@ -4,6 +4,7 @@ import {
   Text,
   View,
   Pressable,
+  Animated,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { recipeApi } from "../lib/recipeApi";
@@ -27,6 +28,7 @@ export function Main() {
   const { recipes, setRecipes } = useRecipeStore();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [shakeAnimation] = useState(new Animated.Value(0));
 
   const handlerFavorite = () => setIsFavorite((prev) => !prev);
 
@@ -47,6 +49,40 @@ export function Main() {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Este useEffect se ejecuta cada vez que cambia isEditMode
+  useEffect(() => {
+    // Si estamos en modo edición
+    if (isEditMode) {
+      // Creamos una animación en bucle usando Animated.loop
+      Animated.loop(
+        // La animación es una secuencia de 3 pasos
+        Animated.sequence([
+          // Primer paso: Anima a valor 1 en 150ms
+          Animated.timing(shakeAnimation, {
+            toValue: 0,
+            duration: 100,
+            useNativeDriver: true, // Usa el driver nativo para mejor rendimiento
+          }),
+          // Segundo paso: Mantiene valor 1 por otros 150ms
+          Animated.timing(shakeAnimation, {
+            toValue: 1,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+          // Tercer paso: Vuelve a 0 en 150ms
+          Animated.timing(shakeAnimation, {
+            toValue: 0,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start(); // Inicia la animación
+    } else {
+      // Si no estamos en modo edición, resetea la animación a 0
+      shakeAnimation.setValue(0);
+    }
+  }, [isEditMode, shakeAnimation]); // Agregamos shakeAnimation como dependencia
 
   const filteredRecipes = Array.isArray(recipes)
     ? isFavorite
@@ -108,20 +144,40 @@ export function Main() {
                     </Pressable>
                   </View>
                 )}
-                <View className="w-full">
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        translateX: shakeAnimation.interpolate({
+                          inputRange: [0.5, 1],
+                          outputRange: [0.5, 1],
+                        }),
+                      },
+                      {
+                        translateY: shakeAnimation.interpolate({
+                          inputRange: [0.5, 1],
+                          outputRange: [0.5, 1],
+                        }),
+                      },
+                    ],
+                  }}
+                  className="w-full"
+                >
                   <AnimatedRecipeCard recipe={item} index={index} />
-                </View>
+                </Animated.View>
               </View>
             )}
           />
         )}
       </View>
 
-      <Link asChild href="/generate">
-        <StyledPressable className="absolute bottom-4 right-4 bg-orange-400 w-14 h-14 rounded-full flex items-center justify-center shadow-black shadow-sm shadow-opacity-20 elevation-5 active:scale-95 active:opacity-90">
-          <AddIcon color="white" size={24} />
-        </StyledPressable>
-      </Link>
+      {!isEditMode && (
+        <Link asChild href="/generate">
+          <StyledPressable className="absolute bottom-4 right-4 bg-orange-400 w-14 h-14 rounded-full flex items-center justify-center shadow-black shadow-sm shadow-opacity-20 elevation-5 active:scale-95 active:opacity-90">
+            <AddIcon color="white" size={24} />
+          </StyledPressable>
+        </Link>
+      )}
     </Screen>
   );
 }
