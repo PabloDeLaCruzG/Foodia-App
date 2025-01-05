@@ -130,6 +130,8 @@ export function Main() {
           </Text>
         ) : (
           <FlatList
+            className="mb-10"
+            showsVerticalScrollIndicator={false}
             data={filteredRecipes}
             keyExtractor={(item) => item._id.toString()}
             renderItem={({ item, index }) => (

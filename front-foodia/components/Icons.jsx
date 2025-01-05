@@ -1,4 +1,5 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -53,4 +54,12 @@ export const CheckIcono = (props) => (
 
 export const RemoveCircle = (props) => (
   <Ionicons name="remove-circle" size={24} color="red" />
+);
+
+export const DeleteIcon = (props) => (
+  <FontAwesome6 name="delete-left" size={24} color="black" {...props} />
+);
+
+export const CheckIconDos = (props) => (
+  <FontAwesome5 name="check" size={14} color="white" />
 );

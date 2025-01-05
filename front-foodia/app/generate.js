@@ -9,9 +9,8 @@ import {
 } from "react-native";
 import { Screen } from "../components/Screen";
 import { recipeApi } from "../lib/recipeApi";
-import { AddIcon } from "../components/Icons";
+import { AddIcon, DeleteIcon, CheckIconDos } from "../components/Icons";
 import Slider from "@react-native-community/slider";
-import { useNavigation } from "@react-navigation/native";
 import { Stack, useRouter } from "expo-router";
 import LoadingModal from "../components/LoadingModal";
 import useRecipeStore from "../stores/recipeStore";
@@ -28,6 +27,7 @@ export default function Generate() {
 
   const [newIngredient, setNewIngredient] = useState(""); // Temporal ingredient
   const [loading, setLoading] = useState(false);
+  const [newRestriction, setNewRestriction] = useState("");
 
   const toggleRestriction = (restriction) => {
     if (restrictions.includes(restriction)) {
@@ -55,8 +55,16 @@ export default function Generate() {
   const { addRecipe } = useRecipeStore();
 
   const handleSubmit = async () => {
-    const formattedRange = `${caloriesRange.min}-${caloriesRange.max}`;
+    if (!occasion || !recipeType) {
+      Alert.alert(
+        "Campos requeridos",
+        "Por favor, selecciona la ocasión y el tipo de receta antes de continuar.",
+        [{ text: "Entendido" }],
+      );
+      return;
+    }
 
+    const formattedRange = `${caloriesRange.min}-${caloriesRange.max}`;
     const body = {
       event: occasion,
       typeRecipe: recipeType,
@@ -105,12 +113,14 @@ export default function Generate() {
           headerRight: () => <Text className="text-white"></Text>,
         }}
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Text className="text-3xl font-bold text-center mt-6  ">
           Generar receta
         </Text>
 
-        <Text className="text-lg font-semibold mt-6  ">Ocación</Text>
+        <Text className="text-lg font-semibold mt-6">
+          Ocasión <Text className="text-red-500">*</Text>
+        </Text>
         <View className="flex-row mt-2">
           <Pressable
             onPress={() => setOccasion("Diario")}
@@ -130,7 +140,9 @@ export default function Generate() {
           </Pressable>
         </View>
 
-        <Text className="text-lg font-semibold mt-6  ">Tipo de receta</Text>
+        <Text className="text-lg font-semibold mt-6">
+          Tipo de receta <Text className="text-red-500">*</Text>
+        </Text>
         <View className="flex-row mt-2">
           {["Reposteria", "Comida", "Snack"].map((type) => (
             <Pressable
@@ -145,107 +157,205 @@ export default function Generate() {
           ))}
         </View>
 
-        <Text className="text-lg font-semibold mt-6  ">Restricciones</Text>
+        <View className="flex-row items-baseline">
+          <Text className="text-lg font-semibold mt-6">Restricciones</Text>
+          <Text className="text-xs text-gray-600 ml-0.5">(opcional)</Text>
+        </View>
         <View className="flex-row flex-wrap mt-2">
-          {[
-            "Vegana",
-            "Vegetariana",
-            "Sin gluten",
-            "Sin lactosa",
-            "Bajo en sal",
-          ].map((restriction) => (
-            <Pressable
-              key={restriction}
-              onPress={() => toggleRestriction(restriction)}
-              className={`px-4 py-2 rounded-lg mb-2 ${
-                restrictions.includes(restriction)
-                  ? "bg-[#F1BD4D]/50"
-                  : "bg-[#B8D8BA]/50"
-              } mr-4`}
-            >
-              <Text className={" "}>{restriction}</Text>
-            </Pressable>
-          ))}
+          {["Vegana", "Vegetariana", "Sin gluten", "Sin lactosa"].map(
+            (restriction) => (
+              <Pressable
+                key={restriction}
+                onPress={() => toggleRestriction(restriction)}
+                className={`px-2 py-1 rounded-lg mb-2 ${
+                  restrictions.includes(restriction)
+                    ? "bg-[#F1BD4D]/50"
+                    : "bg-[#B8D8BA]/50"
+                } mr-2`}
+              >
+                <Text className="text-xs">{restriction}</Text>
+              </Pressable>
+            ),
+          )}
         </View>
 
-        <Text className="text-lg font-semibold mt-6  ">Ingredientes</Text>
         <View className="flex-row items-center mt-2">
           <TextInput
-            value="newIngredient"
+            value={newRestriction}
+            onChangeText={setNewRestriction}
+            placeholder="Añade otra restricción"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 bg-slate-50"
+          />
+          <Pressable
+            onPress={() => {
+              if (newRestriction.trim()) {
+                toggleRestriction(newRestriction.trim());
+                setNewRestriction("");
+              }
+            }}
+            className="ml-2 px-4 py-2 bg-orange-400 rounded-lg"
+          >
+            {newRestriction.trim() ? (
+              <AddIcon color="white" size={16} />
+            ) : (
+              <CheckIconDos color="white" size={16} />
+            )}
+          </Pressable>
+        </View>
+
+        {/* Lista de restricciones personalizadas */}
+        <View className="flex-row flex-wrap mt-2">
+          {restrictions
+            .filter(
+              (r) =>
+                ![
+                  "Vegana",
+                  "Vegetariana",
+                  "Sin gluten",
+                  "Sin lactosa",
+                ].includes(r),
+            )
+            .map((restriction, index) => (
+              <View
+                key={index}
+                className="flex-row items-center px-2 py-1 bg-[#B8D8BA] rounded-lg mb-2 mr-2"
+              >
+                <Text className="mr-2 text-xs">{restriction}</Text>
+                <Pressable
+                  onPress={() => toggleRestriction(restriction)}
+                  className="active:opacity-60"
+                >
+                  <DeleteIcon size={16} />
+                </Pressable>
+              </View>
+            ))}
+        </View>
+
+        <View className="flex-row items-baseline">
+          <Text className="text-lg font-semibold mt-6">Ingredientes</Text>
+          <Text className="text-xs text-gray-600 ml-0.5">(opcional)</Text>
+        </View>
+        <View className="flex-row items-center mt-2">
+          <TextInput
+            value={newIngredient}
             onChangeText={setNewIngredient}
             placeholder="Elige un ingrediente"
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 bg-slate-50"
           />
           <Pressable
-            onPress={addIngredient}
+            onPress={() => {
+              if (newIngredient.trim()) {
+                addIngredient(newIngredient);
+                setNewIngredient("");
+              }
+            }}
             className="ml-2 px-4 py-2 bg-orange-400 rounded-lg"
           >
-            <AddIcon color="white" size={16} />
+            {newIngredient.trim() ? (
+              <AddIcon color="white" size={16} />
+            ) : (
+              <CheckIconDos color="white" size={16} />
+            )}
           </Pressable>
         </View>
         <View className="flex-row flex-wrap mt-2">
           {ingredients.map((ingredient, index) => (
             <View
               key={index}
-              className="px-4 py-2 bg-green-100 rounded-lg mb-2 mr-2"
+              className="flex-row items-center px-2 py-1 bg-[#B8D8BA] rounded-lg mb-2 mr-2"
             >
-              <Text className={" "}>{ingredient}</Text>
+              <Text className="mr-2 font-semibold">{ingredient}</Text>
+              <Pressable
+                onPress={() => {
+                  const newIngredients = ingredients.filter(
+                    (_, i) => i !== index,
+                  );
+                  setIngredients(newIngredients);
+                }}
+                className="active:opacity-60"
+              >
+                <DeleteIcon size={16} />
+              </Pressable>
             </View>
           ))}
         </View>
 
-        <Text className="text-lg font-semibold mt-6">
-          Rango de calorías (Opcional)
-        </Text>
+        <View className="mt-6">
+          <Text className="text-lg font-semibold mb-4">Rango de calorías</Text>
 
-        <View className="mt-4 relative">
-          {/* Texto del rango */}
-          <Text className="text-center text-sm text-[#666]">
-            {caloriesRange.min} Kcal - {caloriesRange.max} Kcal
-          </Text>
+          {/* Contenedor del rango */}
+          <View className="mb-6">
+            <View className="flex-row justify-between mb-2">
+              <Text className="text-sm font-medium text-gray-600">
+                {caloriesRange.min} Kcal
+              </Text>
+              <Text className="text-sm font-medium text-gray-600">
+                {caloriesRange.max} Kcal
+              </Text>
+            </View>
 
-          {/* Slider de mínimo */}
-          <Slider
-            style={{
-              width: "70%",
-              height: 40,
-              top: 40,
-            }}
-            minimumValue={0}
-            maximumValue={1000} // Máximo dinámico para evitar solapamientos
-            step={50}
-            value={caloriesRange.min}
-            onSlidingComplete={(value) => {
-              setCaloriesRange((prev) => ({
-                ...prev,
-                min: Math.min(value, prev.max - 50), // Ajusta el mínimo para no cruzar el máximo
-              }));
-            }}
-            onValueChange={(value) => handleCaloriesChange("min", value)}
-            minimumTrackTintColor="#58b57e"
-            maximumTrackTintColor="d3d3d3" // Transparenta la pista del máximo
-            thumbTintColor="#58b57e"
-          />
+            {/* Contenedor de los sliders */}
+            <View className="flex-row justify-between mx-auto">
+              <View style={{ width: "50%" }}>
+                <Slider
+                  style={{
+                    width: "100%",
+                    height: 40,
+                  }}
+                  minimumValue={0}
+                  maximumValue={1000}
+                  step={50}
+                  value={caloriesRange.min}
+                  onSlidingComplete={(value) => {
+                    if (value >= caloriesRange.max) {
+                      setCaloriesRange((prev) => ({
+                        ...prev,
+                        min: prev.max - 50,
+                      }));
+                    } else {
+                      setCaloriesRange((prev) => ({
+                        ...prev,
+                        min: value,
+                      }));
+                    }
+                  }}
+                  onValueChange={(value) => {
+                    if (value < caloriesRange.max) {
+                      handleCaloriesChange("min", value);
+                    }
+                  }}
+                  minimumTrackTintColor="#e5e7eb"
+                  maximumTrackTintColor="#58b57e"
+                  thumbTintColor="#58b57e"
+                />
+              </View>
 
-          {/* Slider de máximo */}
-          <Slider
-            style={{
-              width: "70%",
-              left: 115,
-              height: 40,
-            }}
-            minimumValue={caloriesRange.min + 50} // Mínimo dinámico para evitar solapamientos
-            maximumValue={1000}
-            step={50}
-            value={caloriesRange.max}
-            onValueChange={(value) => handleCaloriesChange("max", value)}
-            minimumTrackTintColor="transparent" // Transparenta la pista del mínimo
-            maximumTrackTintColor="orange"
-            thumbTintColor="#ff8c00"
-          />
+              <View style={{ width: "50%" }}>
+                <Slider
+                  style={{
+                    width: "100%",
+                    height: 40,
+                    position: "absolute",
+                  }}
+                  minimumValue={0}
+                  maximumValue={1000}
+                  step={50}
+                  value={caloriesRange.max}
+                  onValueChange={(value) => {
+                    if (value > caloriesRange.min) {
+                      handleCaloriesChange("max", value);
+                    }
+                  }}
+                  minimumTrackTintColor="#58b57e"
+                  maximumTrackTintColor="#e5e7eb"
+                  thumbTintColor="#ff8c00"
+                />
+              </View>
+            </View>
+          </View>
         </View>
 
-        <Text className="text-lg font-semibold mt-6 text-[#333]">Personas</Text>
+        <Text className="text-lg font-semibold mt-2 text-[#333]">Personas</Text>
         <View className="flex-row items-center mt-2">
           <Pressable
             onPress={() => setPeople(Math.max(1, people - 1))}
@@ -264,10 +374,14 @@ export default function Generate() {
 
         <Pressable
           onPress={handleSubmit}
-          className={`mb-10 mt-8 bg-[#58b57e] py-4 items-center rounded-lg ${
-            loading ? "opacity-50" : "active:opacity-70 active:scale-95"
+          className={`mb-10 mt-10 py-4 items-center rounded-lg ${
+            !occasion || !recipeType
+              ? "bg-gray-400"
+              : loading
+                ? "bg-[#58b57e] opacity-50"
+                : "bg-[#58b57e] active:opacity-70 active:scale-95"
           }`}
-          disabled={loading} // Deshabilitar mientras se genera la receta
+          disabled={loading || !occasion || !recipeType}
         >
           <Text className="text-lg font-bold text-white">
             {loading ? "Generando..." : "Generar Recetas"}
